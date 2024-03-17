@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Login } from './pages/login'
+import { Flow } from './pages/flow'
 
 function App() {
   const [count, setCount] = useState(0)
 
-  return <Login />
+  return <Flow />
 }
 
 export default App
