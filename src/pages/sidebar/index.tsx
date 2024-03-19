@@ -1,28 +1,49 @@
-export const Sidebar = () => {
-  return (
-    <aside className="w-1/5 h-screen bg-emerald-800">
-      <div className="w-full h-20 bg-emerald-600 flex justify-center items-center">
-        <h1>Logo</h1>
-      </div>
-      <nav className="w-full h-full">
-        <ul className="w-full h-full flex-col flex items-center justify-center">
-          <li className="w-full h-20 flex justify-center items-center">
-            <a href="#" className="text-white">
-              Dashboard
-            </a>
-          </li>
-          <li className="w-full h-20 flex justify-center items-center">
-            <a href="#" className="text-white">
-              Flow
-            </a>
-          </li>
-          <li className="w-full h-20 flex justify-center items-center">
-            <a href="#" className="text-white">
-              Manage Flow
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </aside>
-  )
+import {
+	Button,
+	Drawer,
+	DrawerBody,
+	DrawerCloseButton,
+	DrawerContent,
+	DrawerFooter,
+	DrawerHeader,
+	DrawerOverlay,
+	Input,
+	useDisclosure,
+} from "@chakra-ui/react"
+
+import React from "react"
+
+export function Sidebar() {
+	const { isOpen, onOpen, onClose } = useDisclosure()
+	const btnRef = React.useRef()
+
+	return (
+		<>
+			<button
+				ref={btnRef as any}
+				className="absolute left-2 top-2 p-2 bg-gray-400 z-10"
+				onClick={onOpen}
+			>
+				Open
+			</button>
+			<Drawer isOpen={isOpen} placement="left" onClose={onClose} finalFocusRef={btnRef}>
+				<DrawerOverlay />
+				<DrawerContent>
+					<DrawerCloseButton />
+					<DrawerHeader>Create your account</DrawerHeader>
+
+					<DrawerBody>
+						<Input placeholder="Type here..." />
+					</DrawerBody>
+
+					<DrawerFooter>
+						<Button variant="outline" mr={3} onClick={onClose}>
+							Cancel
+						</Button>
+						<Button colorScheme="blue">Save</Button>
+					</DrawerFooter>
+				</DrawerContent>
+			</Drawer>
+		</>
+	)
 }
