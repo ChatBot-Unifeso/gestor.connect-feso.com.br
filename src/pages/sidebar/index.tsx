@@ -1,5 +1,4 @@
 import {
-	Button,
 	Drawer,
 	DrawerBody,
 	DrawerCloseButton,
@@ -7,11 +6,12 @@ import {
 	DrawerFooter,
 	DrawerHeader,
 	DrawerOverlay,
-	Input,
 	useDisclosure,
 } from "@chakra-ui/react"
+import { List } from "phosphor-react"
 
 import React from "react"
+import { MenuCard } from "../flow/components/MenuCard"
 
 export function Sidebar() {
 	const { isOpen, onOpen, onClose } = useDisclosure()
@@ -21,26 +21,38 @@ export function Sidebar() {
 		<>
 			<button
 				ref={btnRef as any}
-				className="absolute left-2 top-2 p-2 bg-gray-400 z-10"
+				className="absolute left-2 top-2 p-3 bg-gray-200 z-10 rounded-md"
 				onClick={onOpen}
 			>
-				Open
+				<List size={28} />
 			</button>
-			<Drawer isOpen={isOpen} placement="left" onClose={onClose} finalFocusRef={btnRef}>
+			<Drawer
+				isOpen={isOpen}
+				placement="left"
+				onClose={onClose}
+				finalFocusRef={btnRef as any}
+			>
 				<DrawerOverlay />
 				<DrawerContent>
-					<DrawerCloseButton />
-					<DrawerHeader>Create your account</DrawerHeader>
+					<DrawerHeader>
+						<h1 className="font-2xl text-[#327D6B] font-bold">Seus flows de menu</h1>
+						<DrawerCloseButton className="my-2" />
+					</DrawerHeader>
 
 					<DrawerBody>
-						<Input placeholder="Type here..." />
+						<div className="w-full flex flex-col gap-6 my-4">
+							<MenuCard title="Menu 1" isActive={true} isSelect={true} />
+							<MenuCard title="Menu 2" isActive={false} isSelect={false} />
+						</div>
 					</DrawerBody>
 
 					<DrawerFooter>
-						<Button variant="outline" mr={3} onClick={onClose}>
-							Cancel
-						</Button>
-						<Button colorScheme="blue">Save</Button>
+						<button
+							className="bg-[#327D6B] text-white px-4 py-2 font-bold rounded-md"
+							onClick={onClose}
+						>
+							Cancelar
+						</button>
 					</DrawerFooter>
 				</DrawerContent>
 			</Drawer>
