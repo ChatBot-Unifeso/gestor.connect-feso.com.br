@@ -31,7 +31,7 @@ export const Login = () => {
 							<label htmlFor="">E-mail</label>
 							<input
 								name="email"
-								className=" border-1 m focus:outline-none  focus:ring-emerald-600 border-[1px] border-zinc-400 w-full h-[3rem] px-2 rounded-full font-regular"
+								className=" border-1 m focus:outline-none  focus:ring-emerald-600 border-[1px] border-zinc-400 w-full h-[3rem] px-5 rounded-full font-regular"
 								type="text"
 							/>
 						</div>
@@ -39,7 +39,7 @@ export const Login = () => {
 							<label htmlFor="">Senha</label>
 							<input
 								name="password"
-								className="border-1 focus:outline-none  focus:ring-emerald-600 border-[1px] border-zinc-400 w-full h-[3rem] px-2 rounded-full"
+								className="border-1 focus:outline-none  focus:ring-emerald-600 border-[1px] border-zinc-400 w-full h-[3rem] px-5 rounded-full"
 								type="password"
 							/>
 						</div>
