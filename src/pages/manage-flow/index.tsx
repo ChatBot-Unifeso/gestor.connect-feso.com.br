@@ -1,5 +1,6 @@
 import ReactFlow, {
   Background,
+  BackgroundVariant,
   Controls,
   MiniMap,
   useEdgesState,
@@ -25,7 +26,7 @@ export const ManageFlow = () => {
     >
       <Controls />
       <MiniMap />
-      <Background gap={12} size={1} />
+      <Background gap={12} size={1} variant={BackgroundVariant.Cross} />
     </ReactFlow>
   )
 }
