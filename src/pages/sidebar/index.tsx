@@ -11,19 +11,15 @@ import {
 import { List } from "phosphor-react"
 
 import React from "react"
+import { MenuProps, menus } from "../flow"
 import { MenuCard } from "../flow/components/MenuCard"
 
 interface SidebarProps {
-	menuState: number
-	setMenuState: React.Dispatch<React.SetStateAction<number>>
+	menuState: MenuProps | undefined
+	handleMenuChange(menu: MenuProps): void
 }
 
-const menus = [
-	"Menu 1",
-	"Menu 2",
-]
-
-export function Sidebar({ menuState, setMenuState }: SidebarProps) {
+export function Sidebar({ menuState, handleMenuChange }: SidebarProps) {
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const btnRef = React.useRef()
 
@@ -53,12 +49,11 @@ export function Sidebar({ menuState, setMenuState }: SidebarProps) {
 						<div className="w-full flex flex-col gap-6 my-4">
 							{menus.map((menu, i) => (
 								<MenuCard
-									key={i}
-									id={i}
-									title={menu}
+									data={menu}
+									key={menu.id}
 									isActive={i === 0}
-									isSelect={menuState === i}
-									setMenuState={setMenuState}
+									isSelect={menuState?.id === i}
+									handleMenuChange={handleMenuChange}
 								/>
 							))}
 						</div>
