@@ -1,13 +1,22 @@
-import ReactFlow, { Background, BackgroundVariant, Controls, MiniMap } from "reactflow"
+import ReactFlow, {
+	Background,
+	BackgroundVariant,
+	Controls,
+	EdgeChange,
+	MiniMap,
+	NodeChange,
+} from "reactflow"
 import "reactflow/dist/style.css"
 
 import { Edge, Node as NodeRF } from "reactflow"
 
+type OnChange<ChangesType> = (changes: ChangesType[]) => void
+
 interface ManageFlowProps {
 	nodes: NodeRF[]
 	edges: Edge[]
-	onNodesChange: any
-	onEdgesChange: any
+	onNodesChange: OnChange<NodeChange>
+	onEdgesChange: OnChange<EdgeChange>
 }
 
 export const ManageFlow = ({ edges, nodes, onNodesChange, onEdgesChange }: ManageFlowProps) => {
