@@ -13,8 +13,8 @@ import { Edge, Node as NodeRF } from "reactflow"
 type OnChange<ChangesType> = (changes: ChangesType[]) => void
 
 interface ManageFlowProps {
-	nodes: NodeRF[]
-	edges: Edge[]
+	nodes: NodeRF[] | undefined
+	edges: Edge[] | undefined
 	onNodesChange: OnChange<NodeChange>
 	onEdgesChange: OnChange<EdgeChange>
 }

@@ -11,15 +11,16 @@ import {
 import { List } from "phosphor-react"
 
 import React from "react"
-import { MenuProps, menus } from "../flow"
+import { MenuProps } from "../flow"
 import { MenuCard } from "../flow/components/MenuCard"
 
 interface SidebarProps {
+	menus: MenuProps[]
 	menuState: MenuProps | undefined
 	handleMenuChange(menu: MenuProps): void
 }
 
-export function Sidebar({ menuState, handleMenuChange }: SidebarProps) {
+export function Sidebar({ menuState, handleMenuChange, menus }: SidebarProps) {
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const btnRef = React.useRef()
 

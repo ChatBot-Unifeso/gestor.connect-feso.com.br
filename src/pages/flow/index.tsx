@@ -1,7 +1,8 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {
 	Edge,
 	EdgeChange,
+	Node,
 	NodeChange,
 	Node as NodeRF,
 	applyEdgeChanges,
@@ -18,7 +19,7 @@ export interface MenuProps {
 	edges: Edge[]
 }
 
-export const menus: MenuProps[] = [
+const menusStd: MenuProps[] = [
 	{
 		id: 0,
 		title: "Menu 1",
@@ -39,17 +40,51 @@ export const menus: MenuProps[] = [
 	},
 ]
 
+function saveMenus(menus: MenuProps[]) {
+	localStorage.setItem("menus", JSON.stringify(menus))
+}
+
 export const Flow = () => {
-	const [menu, setMenu] = useState<MenuProps | undefined>(menus[0])
-	const [nodes, setNodes] = useState(menus[0].nodes)
-	const [edges, setEdges] = useState(menus[0].edges)
+	const [menus, setMenus] = useState<MenuProps[]>([])
+
+	useEffect(() => {
+		const menusLS = localStorage.getItem("menus")
+		if (menusLS) {
+			setMenus(JSON.parse(menusLS))
+		} else {
+			setMenus(menusStd)
+			saveMenus(menusStd)
+		}
+
+		console.log(menus)
+
+		if (menus.length === 0) return
+
+		setMenu(menus[0])
+		setNodes(menus[0].nodes)
+		setEdges(menus[0].edges)
+	}, [])
+
+	const [menu, setMenu] = useState<MenuProps | undefined>()
+	const [nodes, setNodes] = useState<Node[] | undefined>()
+	const [edges, setEdges] = useState<Edge[] | undefined>()
 
 	const onNodesChange = useCallback(
-		(changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
+		(changes: NodeChange[]) =>
+			setNodes((nds) => {
+				if (!nds) return []
+				const newNodes = applyNodeChanges(changes, nds)
+				//console.log(newNodes)
+				return newNodes
+			}),
 		[]
 	)
 	const onEdgesChange = useCallback(
-		(changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+		(changes: EdgeChange[]) =>
+			setEdges((eds) => {
+				if (!eds) return []
+				return applyEdgeChanges(changes, eds)
+			}),
 		[]
 	)
 
@@ -62,7 +97,7 @@ export const Flow = () => {
 
 	return (
 		<div className="flex w-screen">
-			<Sidebar menuState={menu} handleMenuChange={handleMenuChange} />
+			<Sidebar menuState={menu} menus={menus} handleMenuChange={handleMenuChange} />
 			<section className="h-screen w-full flex justify-between items-center border-1 border-zinc-400">
 				{menu ? (
 					<ManageFlow
@@ -73,7 +108,7 @@ export const Flow = () => {
 					/>
 				) : (
 					<div className="flex justify-center items-center w-full h-full">
-						<h1 className="text-4xl font-bold text-zinc-400">Selecione um menu</h1>
+						<h1 className="text-4xl font-bold text-zinc-400">Sem menus</h1>
 					</div>
 				)}
 			</section>
