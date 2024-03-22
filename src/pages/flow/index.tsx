@@ -1,5 +1,12 @@
-import { useState } from "react"
-import { Edge, Node as NodeRF, useEdgesState, useNodesState } from "reactflow"
+import { useCallback, useState } from "react"
+import {
+	Edge,
+	EdgeChange,
+	NodeChange,
+	Node as NodeRF,
+	applyEdgeChanges,
+	applyNodeChanges,
+} from "reactflow"
 import { ManageFlow } from "../manage-flow"
 import { Sidebar } from "../sidebar"
 
@@ -34,8 +41,17 @@ export const menus: MenuProps[] = [
 
 export const Flow = () => {
 	const [menu, setMenu] = useState<MenuProps | undefined>(menus[0])
-	const [nodesState, setNodes, onNodesChange] = useNodesState(menus[0].nodes)
-	const [edgesState, setEdges, onEdgesChange] = useEdgesState(menus[0].edges)
+	const [nodes, setNodes] = useState(menus[0].nodes)
+	const [edges, setEdges] = useState(menus[0].edges)
+
+	const onNodesChange = useCallback(
+		(changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
+		[]
+	)
+	const onEdgesChange = useCallback(
+		(changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+		[]
+	)
 
 	function handleMenuChange(menuP: MenuProps) {
 		console.log(menuP)
@@ -50,8 +66,8 @@ export const Flow = () => {
 			<section className="h-screen w-full flex justify-between items-center border-1 border-zinc-400">
 				{menu ? (
 					<ManageFlow
-						nodes={menu.nodes}
-						edges={menu.edges}
+						nodes={nodes}
+						edges={edges}
 						onEdgesChange={onEdgesChange}
 						onNodesChange={onNodesChange}
 					/>
