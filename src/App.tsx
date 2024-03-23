@@ -1,11 +1,24 @@
-import { useState } from 'react'
-import { Login } from './pages/login'
-import { Flow } from './pages/flow'
+import { RouterProvider, createBrowserRouter } from "react-router-dom"
+import { Flow } from "./pages/flow"
+import { Login } from "./pages/login"
+
+const router = createBrowserRouter([
+	{
+		path: "/login",
+		element: <Login />,
+	},
+	{
+		path: "/flow",
+		element: <Flow />,
+	},
+	{
+		path: "/",
+		element: <Login />,
+	},
+])
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return <Login/>
+	return <RouterProvider router={router} />
 }
 
 export default App
