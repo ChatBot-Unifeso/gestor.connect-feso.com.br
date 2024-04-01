@@ -26,6 +26,7 @@ export const ManageFlow = ({ edges, nodes, onNodesChange, onEdgesChange }: Manag
 			edges={edges}
 			onNodesChange={onNodesChange}
 			onEdgesChange={onEdgesChange}
+			fitView={true}
 		>
 			<Controls />
 			<MiniMap />

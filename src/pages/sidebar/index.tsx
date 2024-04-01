@@ -18,9 +18,10 @@ interface SidebarProps {
 	menus: MenuProps[]
 	menuState: MenuProps | undefined
 	handleMenuChange(menu: MenuProps): void
+	deleteMenu(menu: MenuProps): void
 }
 
-export function Sidebar({ menuState, handleMenuChange, menus }: SidebarProps) {
+export function Sidebar({ menuState, handleMenuChange, menus, deleteMenu }: SidebarProps) {
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const btnRef = React.useRef()
 
@@ -53,8 +54,9 @@ export function Sidebar({ menuState, handleMenuChange, menus }: SidebarProps) {
 									data={menu}
 									key={menu.id}
 									isActive={i === 0}
-									isSelect={menuState?.id === i}
+									isSelect={menuState?.id === menu.id}
 									handleMenuChange={handleMenuChange}
+									deleteMenu={deleteMenu}
 								/>
 							))}
 						</div>

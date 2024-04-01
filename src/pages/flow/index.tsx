@@ -12,7 +12,7 @@ import { ManageFlow } from "../manage-flow"
 import { Sidebar } from "../sidebar"
 
 export interface MenuProps {
-	id: number
+	id: string
 	title: string
 
 	nodes: NodeRF[]
@@ -21,7 +21,7 @@ export interface MenuProps {
 
 const menusStd: MenuProps[] = [
 	{
-		id: 0,
+		id: "id-1",
 		title: "Menu 1",
 		nodes: [
 			{ id: "1", position: { x: 0, y: 0 }, data: { label: "1" } },
@@ -30,7 +30,7 @@ const menusStd: MenuProps[] = [
 		edges: [{ id: "e1-2", source: "1", target: "2" }],
 	},
 	{
-		id: 1,
+		id: "id-2",
 		title: "Menu 2",
 		nodes: [
 			{ id: "3", position: { x: 5, y: 10 }, data: { label: "teste 1" } },
@@ -40,42 +40,24 @@ const menusStd: MenuProps[] = [
 	},
 ]
 
-function saveMenus(menus: MenuProps[]) {
-	localStorage.setItem("menus", JSON.stringify(menus))
-}
-
 export const Flow = () => {
 	const [menus, setMenus] = useState<MenuProps[]>([])
-
-	useEffect(() => {
-		const menusLS = localStorage.getItem("menus")
-		if (menusLS) {
-			setMenus(JSON.parse(menusLS))
-		} else {
-			setMenus(menusStd)
-			saveMenus(menusStd)
-		}
-
-		console.log(menus)
-
-		if (menus.length === 0) return
-
-		setMenu(menus[0])
-		setNodes(menus[0].nodes)
-		setEdges(menus[0].edges)
-	}, [])
-
 	const [menu, setMenu] = useState<MenuProps | undefined>()
 	const [nodes, setNodes] = useState<Node[] | undefined>()
 	const [edges, setEdges] = useState<Edge[] | undefined>()
+
+	useEffect(() => {
+		setMenus(menusStd)
+		setNodes(menusStd[0].nodes)
+		setEdges(menusStd[0].edges)
+		setMenu(menusStd[0])
+	}, [])
 
 	const onNodesChange = useCallback(
 		(changes: NodeChange[]) =>
 			setNodes((nds) => {
 				if (!nds) return []
-				const newNodes = applyNodeChanges(changes, nds)
-				//console.log(newNodes)
-				return newNodes
+				return applyNodeChanges(changes, nds)
 			}),
 		[]
 	)
@@ -89,15 +71,34 @@ export const Flow = () => {
 	)
 
 	function handleMenuChange(menuP: MenuProps) {
-		console.log(menuP)
-		setMenu(menuP)
-		setNodes(menuP.nodes)
-		setEdges(menuP.edges)
+		const selectMenu = menus.find((m) => m.id === menuP.id)
+		if (!selectMenu) {
+			console.error("Menu não encontrado")
+			return
+		}
+		setMenu(selectMenu)
+		setNodes(selectMenu.nodes)
+		setEdges(selectMenu.edges)
+	}
+
+	function deleteMenu(menuP: MenuProps) {
+		const newMenus = menus.filter((m) => m.id !== menuP.id)
+		setMenus(newMenus)
+		if (menuP.id === menu?.id) {
+			setMenu(undefined)
+			setNodes(undefined)
+			setEdges(undefined)
+		}
 	}
 
 	return (
 		<div className="flex w-screen">
-			<Sidebar menuState={menu} menus={menus} handleMenuChange={handleMenuChange} />
+			<Sidebar
+				menuState={menu}
+				menus={menus}
+				handleMenuChange={handleMenuChange}
+				deleteMenu={deleteMenu}
+			/>
 			<section className="h-screen w-full flex justify-between items-center border-1 border-zinc-400">
 				{menu ? (
 					<ManageFlow
