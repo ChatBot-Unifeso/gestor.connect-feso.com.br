@@ -1,31 +1,46 @@
 import ReactFlow, {
-  Background,
-  Controls,
-  MiniMap,
-  useEdgesState,
-  useNodesState,
-} from 'reactflow'
-import 'reactflow/dist/style.css'
-const initialNodes = [
-  { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
-  { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
-]
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }]
+	Background,
+	BackgroundVariant,
+	Controls,
+	EdgeChange,
+	NodeChange,
+} from "reactflow"
+import "reactflow/dist/style.css"
 
-export const ManageFlow = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
+import { Edge, Node as NodeRF } from "reactflow"
+import { StraightEdge } from "./straightEdge"
 
-  return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-    >
-      <Controls />
-      <MiniMap />
-      <Background gap={12} size={1} />
-    </ReactFlow>
-  )
+type OnChange<ChangesType> = (changes: ChangesType[]) => void
+
+interface ManageFlowProps {
+	nodes: NodeRF[] | undefined
+	edges: Edge[] | undefined
+	onNodesChange: OnChange<NodeChange>
+	onEdgesChange: OnChange<EdgeChange>
+	onConnect: (connection: any) => void
+}
+
+export const ManageFlow = ({
+	edges,
+	nodes,
+	onNodesChange,
+	onEdgesChange,
+	onConnect,
+}: ManageFlowProps) => {
+	return (
+		<ReactFlow
+			nodes={nodes}
+			edges={edges}
+			onNodesChange={onNodesChange}
+			onEdgesChange={onEdgesChange}
+			fitView={true}
+			onConnect={onConnect}
+			edgeTypes={{
+				"straight-edge": StraightEdge,
+			}}
+		>
+			<Controls />
+			<Background gap={12} size={1} variant={BackgroundVariant.Cross} />
+		</ReactFlow>
+	)
 }
