@@ -9,10 +9,10 @@ import {
 } from "@chakra-ui/react"
 import { Plus } from "phosphor-react"
 import { useRef } from "react"
-import { MenuNode } from ".."
+import { MenuProps } from ".."
 
 interface CreateMenuDialogProps {
-	addMenuNode(menuNode: MenuNode): void
+	addMenuNode(menuNode: MenuProps): void
 }
 
 export function CreateMenuDialog({ addMenuNode }: CreateMenuDialogProps) {
@@ -24,6 +24,7 @@ export function CreateMenuDialog({ addMenuNode }: CreateMenuDialogProps) {
 		addMenuNode({
 			id: `${randNum}`,
 			title: `Menu ${randNum}`,
+			parentId: "7",
 		})
 		onClose()
 	}

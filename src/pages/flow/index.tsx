@@ -118,7 +118,7 @@ function renderNode(
 	}
 
 	const lenBrothers = thisFlowTree[parentNode.id]?.length || 0
-	console.log("lenBrothers", lenBrothers)
+	//console.log("lenBrothers", lenBrothers)
 	const node: NodeRF = {
 		id: menu.id,
 		data: { label: menu.title },
@@ -143,12 +143,12 @@ function renderNode(
 	}
 	thisFlowTree[parentNode.id] = [...(thisFlowTree[parentNode.id] || []), node.id]
 
-	console.log(
-		"render node",
-		node,
-		thisFlowTree,
-		parentNode.position.y + Math.sin(45) * 256 * (lenBrothers - 1)
-	)
+	// console.log(
+	// 	"render node",
+	// 	node,
+	// 	thisFlowTree,
+	// 	parentNode.position.y + Math.sin(45) * 256 * (lenBrothers - 1)
+	// )
 	return { node, flowTree: thisFlowTree }
 }
 
@@ -192,8 +192,8 @@ export const Flow = () => {
 	const [nodes, setNodes] = useState<Node[] | undefined>()
 	const [edges, setEdges] = useState<Edge[] | undefined>()
 
-	useEffect(() => {
-		menusStd.forEach((m, i) => {
+	function renderFlow(flow: FlowProps[]) {
+		flow.forEach((m, i) => {
 			const render = renderNodes(m)
 			if (render instanceof Error) {
 				console.error(render.message)
@@ -209,6 +209,10 @@ export const Flow = () => {
 				setEdges(render.edges)
 			}
 		})
+	}
+
+	useEffect(() => {
+		renderFlow(menusStd)
 	}, [])
 
 	const onNodesChange = useCallback(
@@ -262,26 +266,24 @@ export const Flow = () => {
 	function addMenuNode(menuNode: MenuProps) {
 		if (!menu) return
 		if (!menu.nodes) return
-		const lenMenu = menu.nodes.length - 1
-		const someNode = menu.nodes[lenMenu]
-		const position = {
-			x: someNode.position.x + 256,
-			y: someNode.position.y,
-		}
-		const newNodes = [
-			...menu.nodes,
-			{ id: menuNode.id, position, data: { label: menuNode.title }, height: 15, width: 15 },
-		]
-		setNodes(newNodes)
-		setMenu({ ...menu, nodes: newNodes })
-		setMenus((ms) => {
-			const newMenus = ms.map((m) => {
-				if (m.id === menu.id) return { ...m, nodes: newNodes }
-				return m
-			})
-			return newMenus
-		})
-		setCenter(position.x, position.y, { zoom: 2.3, duration: 1000 })
+		// const lenMenu = menu.nodes.length - 1
+		// const someNode = menu.nodes[lenMenu]
+		// const position = {
+		// 	x: someNode.position.x + 256,
+		// 	y: someNode.position.y,
+		// }
+		// const newNodes = [
+		// 	...menu.nodes,
+		// 	{ id: menuNode.id, position, data: { label: menuNode.title }, height: 15, width: 15 },
+		// ]
+		// // setNodes(newNodes)
+		// setMenu({ ...menu, nodes: newNodes })
+		const allFlow = [...menus]
+		console.log("allFLow", menu.id, allFlow)
+		const selectFlow = allFlow.find((m) => m.id === menu.id)
+		selectFlow?.menus?.push(menuNode)
+		renderFlow(allFlow)
+		//setCenter(lastNode!.position.x, lastNode!.position.y, { zoom: 2.3, duration: 1000 })
 	}
 
 	return (
