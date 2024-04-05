@@ -5,8 +5,6 @@ export const Login = () => {
 		e.preventDefault()
 		const email = e.target.email.value
 		const password = e.target.password.value
-
-		console.log(email, password)
 	}
 	return (
 		<main className="w-full h-screen flex justify-center items-center bg-[#327D6B]">
