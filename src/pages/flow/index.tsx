@@ -269,7 +269,6 @@ export const Flow = () => {
 		}
 	}
 
-	const { zoomIn, zoomOut, setCenter } = useReactFlow()
 
 	function addMenuNode(menuNode: MenuProps) {
 		if (!menu) return
