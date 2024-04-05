@@ -73,20 +73,18 @@ module.exports = {
       },
     },
   },
-   plugins: [require("tailwindcss-animate")],
-    screens: {
-      '2xl': {'max': '1535px'},
+  plugins: [require("tailwindcss-animate")],
+  screens: {
+    '2xl': { 'max': '1535px' },
 
-      'xl': {'max': '1280px'},
+    'xl': { 'max': '1280px' },
 
-      'lg': {'max': '1175px'},
+    'lg': { 'max': '1175px' },
 
-      'md': {'max': '738px'},
+    'md': { 'max': '738px' },
 
-      'sm': {'max': '640px'},
+    'sm': { 'max': '640px' },
 
-      '2sm': {'max': '493px'}
-    }
-  },
-  plugins: [],
+    '2sm': { 'max': '493px' }
+  }
 }
