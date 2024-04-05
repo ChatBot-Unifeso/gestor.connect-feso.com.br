@@ -3,12 +3,12 @@ import ReactFlow, {
 	BackgroundVariant,
 	Controls,
 	EdgeChange,
-	MiniMap,
 	NodeChange,
 } from "reactflow"
 import "reactflow/dist/style.css"
 
 import { Edge, Node as NodeRF } from "reactflow"
+import { StraightEdge } from "./straightEdge"
 
 type OnChange<ChangesType> = (changes: ChangesType[]) => void
 
@@ -17,9 +17,16 @@ interface ManageFlowProps {
 	edges: Edge[] | undefined
 	onNodesChange: OnChange<NodeChange>
 	onEdgesChange: OnChange<EdgeChange>
+	onConnect: (connection: any) => void
 }
 
-export const ManageFlow = ({ edges, nodes, onNodesChange, onEdgesChange }: ManageFlowProps) => {
+export const ManageFlow = ({
+	edges,
+	nodes,
+	onNodesChange,
+	onEdgesChange,
+	onConnect,
+}: ManageFlowProps) => {
 	return (
 		<ReactFlow
 			nodes={nodes}
@@ -27,9 +34,12 @@ export const ManageFlow = ({ edges, nodes, onNodesChange, onEdgesChange }: Manag
 			onNodesChange={onNodesChange}
 			onEdgesChange={onEdgesChange}
 			fitView={true}
+			onConnect={onConnect}
+			edgeTypes={{
+				"straight-edge": StraightEdge,
+			}}
 		>
 			<Controls />
-			<MiniMap />
 			<Background gap={12} size={1} variant={BackgroundVariant.Cross} />
 		</ReactFlow>
 	)

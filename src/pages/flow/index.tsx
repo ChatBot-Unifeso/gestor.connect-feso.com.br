@@ -5,6 +5,7 @@ import {
 	Node,
 	NodeChange,
 	Node as NodeRF,
+	addEdge,
 	applyEdgeChanges,
 	applyNodeChanges,
 	useReactFlow,
@@ -13,63 +14,201 @@ import { ManageFlow } from "../manage-flow"
 import { Sidebar } from "../sidebar"
 import { CreateMenuDialog } from "./components/CreateMenu"
 
-export interface MenuNode {
-	id: string
-	title: string
-}
-
 export interface MenuProps {
 	id: string
 	title: string
-
-	nodes: NodeRF[]
-	edges: Edge[]
+	parentId?: string
 }
 
-const menusStd: MenuProps[] = [
+export interface FlowProps {
+	id: string
+	title: string
+
+	nodes?: NodeRF[]
+	edges?: Edge[]
+	menus?: MenuProps[]
+}
+
+interface FlowTree {
+	[key: string]: string[]
+}
+
+const menusStd: FlowProps[] = [
 	{
 		id: "id-1",
 		title: "Menu 1",
-		nodes: [
-			{ id: "1", position: { x: 0, y: 0 }, data: { label: "1" }, height: 15, width: 15 },
-			{ id: "2", position: { x: 0, y: 100 }, data: { label: "2" }, height: 15, width: 15 },
-		],
-		edges: [{ id: "e1-2", source: "1", target: "2" }],
-	},
-	{
-		id: "id-2",
-		title: "Menu 2",
-		nodes: [
+		menus: [
+			{
+				id: "1",
+				title: "Menu 1.1",
+			},
+			{
+				id: "2",
+				title: "Menu 1.2",
+				parentId: "1",
+			},
 			{
 				id: "3",
-				position: { x: 5, y: 10 },
-				data: { label: "teste 1" },
-				height: 15,
-				width: 15,
+				title: "Menu 1.3",
+				parentId: "1",
 			},
 			{
 				id: "4",
-				position: { x: 0, y: 100 },
-				data: { label: "teste 2" },
-				height: 15,
-				width: 15,
+				title: "Menu 1.4",
+				parentId: "1",
+			},
+			{
+				id: "5",
+				title: "Menu 1.5",
+				parentId: "2",
+			},
+			{
+				id: "6",
+				title: "Menu 1.6",
+				parentId: "2",
+			},
+			{
+				id: "7",
+				title: "Menu 1.7",
+				parentId: "1",
 			},
 		],
-		edges: [{ id: "e3-4", source: "4", target: "3" }],
 	},
+	// {
+	// 	id: "id-2",
+	// 	title: "Menu 2",
+	// 	edges: [{ id: "e3-4", source: "4", target: "3" }],
+	// 	menus: [
+	// 		{
+	// 			id: "3",
+	// 			title: "Menu 2.1",
+	// 		},
+	// 		{
+	// 			id: "4",
+	// 			title: "Menu 2.2",
+	// 			parentId: "3",
+	// 		},
+	// 	],
+	// },
 ]
 
+interface RenderNodesReturn {
+	node: NodeRF
+	flowTree: FlowTree
+}
+
+function renderNode(
+	menu: MenuProps,
+	allNodes: NodeRF[],
+	menus: MenuProps[],
+	flowTree: FlowTree
+): RenderNodesReturn | Error {
+	let thisFlowTree = { ...flowTree }
+	let parentNode: NodeRF | undefined
+	const nodeParentId = allNodes.find((n) => n.id === menu.parentId)
+	if (!nodeParentId) {
+		const parentStillNotRendered = menus.find((m) => m.id === menu.parentId)
+		if (!parentStillNotRendered) return new Error("Menu pai não encontrado")
+		const renderParent = renderNode(parentStillNotRendered, allNodes, menus, thisFlowTree)
+		if (renderParent instanceof Error) return renderParent
+		parentNode = renderParent.node
+		thisFlowTree = renderParent.flowTree
+	} else {
+		parentNode = nodeParentId
+	}
+
+	const lenBrothers = thisFlowTree[parentNode.id]?.length || 0
+	console.log("lenBrothers", lenBrothers)
+	const node: NodeRF = {
+		id: menu.id,
+		data: { label: menu.title },
+	} as NodeRF
+
+	if (lenBrothers === 0) {
+		node.position = { x: parentNode.position.x + 256, y: parentNode.position.y }
+	} else {
+		let chooseLenBrothers = Math.ceil(lenBrothers / 2)
+
+		if (lenBrothers % 2 === 0) {
+			node.position = {
+				x: parentNode.position.x + 256,
+				y: parentNode.position.y - Math.sin(45) * 256 * chooseLenBrothers,
+			}
+		} else {
+			node.position = {
+				x: parentNode.position.x + 256,
+				y: parentNode.position.y + Math.sin(45) * 256 * chooseLenBrothers,
+			}
+		}
+	}
+	thisFlowTree[parentNode.id] = [...(thisFlowTree[parentNode.id] || []), node.id]
+
+	console.log(
+		"render node",
+		node,
+		thisFlowTree,
+		parentNode.position.y + Math.sin(45) * 256 * (lenBrothers - 1)
+	)
+	return { node, flowTree: thisFlowTree }
+}
+
+function renderNodes(flow: FlowProps) {
+	let flowTree: FlowTree = {}
+	if (!flow.menus) return new Error("O Flow precisa ter menus!")
+	const rootNode = flow.menus.filter((n) => !n.parentId)
+	if (!rootNode?.length) return new Error("O Flow precisa ter um menu raiz!")
+	if (rootNode!.length > 1) return new Error("O Flow não pode ter mais de um menu raiz!")
+
+	const renderFlow: FlowProps = { ...flow }
+	const nodes = []
+	const edges = []
+
+	nodes.push({ id: rootNode[0].id, data: { label: rootNode[0].title }, position: { x: 0, y: 0 } })
+
+	const menus = flow.menus.filter((m) => m.id !== rootNode[0].id)
+	for (const menu of menus) {
+		const render = renderNode(menu, nodes, flow.menus, flowTree)
+		if (render instanceof Error) return render
+		nodes.push(render.node)
+		flowTree = render.flowTree
+	}
+
+	for (const key in flowTree) {
+		const children = flowTree[key]
+		for (const child of children) {
+			edges.push({ id: `${key}-${child}`, source: key, target: child, type: "straight-edge" })
+		}
+	}
+
+	renderFlow.nodes = nodes
+	renderFlow.edges = edges
+
+	return renderFlow
+}
+
 export const Flow = () => {
-	const [menus, setMenus] = useState<MenuProps[]>([])
-	const [menu, setMenu] = useState<MenuProps | undefined>()
+	const [menus, setMenus] = useState<FlowProps[]>([])
+	const [menu, setMenu] = useState<FlowProps | undefined>()
 	const [nodes, setNodes] = useState<Node[] | undefined>()
 	const [edges, setEdges] = useState<Edge[] | undefined>()
 
 	useEffect(() => {
-		setMenus(menusStd)
-		setNodes(menusStd[0].nodes)
-		setEdges(menusStd[0].edges)
-		setMenu(menusStd[0])
+		menusStd.forEach((m, i) => {
+			const render = renderNodes(m)
+			if (render instanceof Error) {
+				console.error(render.message)
+				return
+			}
+			setMenus((ms) => {
+				if (!ms) return [render]
+				return [...ms, render]
+			})
+			if (i === 0) {
+				setMenu(render)
+				setNodes(render.nodes)
+				setEdges(render.edges)
+			}
+		})
 	}, [])
 
 	const onNodesChange = useCallback(
@@ -89,7 +228,15 @@ export const Flow = () => {
 		[]
 	)
 
-	function handleMenuChange(menuP: MenuProps) {
+	const onConnect = useCallback(
+		(connection: any) => {
+			const edge = { ...connection, type: "custom-edge" }
+			setEdges((eds: any) => addEdge(edge, eds))
+		},
+		[setEdges]
+	)
+
+	function handleMenuChange(menuP: FlowProps) {
 		const selectMenu = menus.find((m) => m.id === menuP.id)
 		if (!selectMenu) {
 			console.error("Menu não encontrado")
@@ -100,7 +247,7 @@ export const Flow = () => {
 		setEdges(selectMenu.edges)
 	}
 
-	function deleteMenu(menuP: MenuProps) {
+	function deleteMenu(menuP: FlowProps) {
 		const newMenus = menus.filter((m) => m.id !== menuP.id)
 		setMenus(newMenus)
 		if (menuP.id === menu?.id) {
@@ -112,8 +259,9 @@ export const Flow = () => {
 
 	const { zoomIn, zoomOut, setCenter } = useReactFlow()
 
-	function addMenuNode(menuNode: MenuNode) {
+	function addMenuNode(menuNode: MenuProps) {
 		if (!menu) return
+		if (!menu.nodes) return
 		const lenMenu = menu.nodes.length - 1
 		const someNode = menu.nodes[lenMenu]
 		const position = {
@@ -153,6 +301,7 @@ export const Flow = () => {
 							edges={edges}
 							onEdgesChange={onEdgesChange}
 							onNodesChange={onNodesChange}
+							onConnect={onConnect}
 						/>
 					</>
 				) : (
