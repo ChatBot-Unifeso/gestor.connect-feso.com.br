@@ -5,26 +5,33 @@ import {
 	AlertDialogContent,
 	AlertDialogHeader,
 	AlertDialogOverlay,
+	Input,
+	Select,
 	useDisclosure,
 } from "@chakra-ui/react"
 import { Plus } from "phosphor-react"
-import { useRef } from "react"
-import { MenuProps } from ".."
+import { useRef, useState } from "react"
+import { FlowProps, MenuProps } from ".."
 
 interface CreateMenuDialogProps {
+	flow: FlowProps | undefined
 	addMenuNode(menuNode: MenuProps): void
 }
 
-export function CreateMenuDialog({ addMenuNode }: CreateMenuDialogProps) {
+export function CreateMenuDialog({ addMenuNode, flow }: CreateMenuDialogProps) {
+	const [selectMenuId, setSelectMenuId] = useState<string | undefined>()
+	const [menuTitle, setMenuTitle] = useState<string | undefined>()
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const cancelRef = useRef()
 
 	function createMenu() {
-		const randNum = Math.floor(Math.random() * 100)
+		const randNum = Math.floor(Math.random() * 100) + 50
+		if (!selectMenuId) return
+		if (!menuTitle) return
 		addMenuNode({
 			id: `${randNum}`,
-			title: `Menu ${randNum}`,
-			parentId: "7",
+			title: menuTitle,
+			parentId: selectMenuId,
 		})
 		onClose()
 	}
@@ -49,7 +56,15 @@ export function CreateMenuDialog({ addMenuNode }: CreateMenuDialogProps) {
 				<AlertDialogContent>
 					<AlertDialogHeader>Adicionar menu</AlertDialogHeader>
 					<AlertDialogCloseButton />
-					<AlertDialogBody>
+					<AlertDialogBody className="flex flex-col gap-6 py-2">
+						<Input onChange={(e) => {setMenuTitle(e.target.value)}} placeholder="Título do menu"/>
+						<Select placeholder='Select option' onChange={(e) => setSelectMenuId(e.target.value)}>
+							{flow?.menus?.map((menu) => (
+								<option key={menu.id} value={menu.id}>
+									{menu.title}
+								</option>
+							))}
+						</Select>
 						<button
 							className="bg-green-600 text-white font-bold px-3 py-2 rounded-md"
 							onClick={createMenu}

@@ -143,6 +143,13 @@ function renderNode(
 	}
 	thisFlowTree[parentNode.id] = [...(thisFlowTree[parentNode.id] || []), node.id]
 
+	const someNodeWithSamePosition = allNodes.find(nd => {
+		return nd.position.x === node.position.x && nd.position.y === node.position.y
+	})
+	if (someNodeWithSamePosition) {
+		node.position = { x: node.position.x + 180, y: node.position.y + 180 }
+	}
+
 	// console.log(
 	// 	"render node",
 	// 	node,
@@ -201,7 +208,8 @@ export const Flow = () => {
 			}
 			setMenus((ms) => {
 				if (!ms) return [render]
-				return [...ms, render]
+				const otherMenus = ms.filter((m) => m.id !== render.id)
+				return [...otherMenus, render]
 			})
 			if (i === 0) {
 				setMenu(render)
@@ -283,7 +291,9 @@ export const Flow = () => {
 		const selectFlow = allFlow.find((m) => m.id === menu.id)
 		selectFlow?.menus?.push(menuNode)
 		renderFlow(allFlow)
-		//setCenter(lastNode!.position.x, lastNode!.position.y, { zoom: 2.3, duration: 1000 })
+		// const lastNode = selectFlow.nodes.find((n) => n.id === menuNode.id)
+		// console.log("lastNode", lastNode, menuNode.id, allFlow[0].nodes)
+		// setCenter(lastNode!.position.x, lastNode!.position.y, { zoom: 2.3, duration: 1000 })
 	}
 
 	return (
@@ -294,7 +304,7 @@ export const Flow = () => {
 				handleMenuChange={handleMenuChange}
 				deleteMenu={deleteMenu}
 			/>
-			<CreateMenuDialog addMenuNode={addMenuNode} />
+			<CreateMenuDialog addMenuNode={addMenuNode} flow={menu}/>
 			<section className="h-screen w-full flex justify-between items-center border-1 border-zinc-400">
 				{menu ? (
 					<>
