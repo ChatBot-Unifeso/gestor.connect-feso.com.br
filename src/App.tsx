@@ -1,4 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
+import { ReactFlowProvider } from "reactflow"
 import { Flow } from "./pages/flow"
 import { Login } from "./pages/login"
 
@@ -9,7 +10,11 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "/flow",
-		element: <Flow />,
+		element: (
+			<ReactFlowProvider>
+				<Flow />
+			</ReactFlowProvider>
+		),
 	},
 	{
 		path: "/",
