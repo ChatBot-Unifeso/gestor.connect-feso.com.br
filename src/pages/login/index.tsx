@@ -17,7 +17,7 @@ export const Login = () => {
             <img src={logo} alt="Logo ConnectFeso"/>
           </div>
         </div>
-        <div className="w-full h-full w-1/2 px-20 gap-2 flex-col flex justify-center  bg-white sm:px-10">
+        <div className="w-full h-full w-1/2 px-5 gap-2 flex-col flex justify-center lg:px-10 bg-white sm:px-5">
           <h1 className="w-full text-5xl text-2xl font-bold mb-2 border-b-1 border-zinc-400 pb-2 text-emerald-600 font-bold justify-center">
             Login
           </h1>
