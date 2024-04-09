@@ -10,6 +10,7 @@ import {
 	RadioGroup,
 	Select,
 	Stack,
+	Textarea,
 	useDisclosure,
 } from "@chakra-ui/react"
 import { Plus } from "phosphor-react"
@@ -22,21 +23,25 @@ interface CreateMenuDialogProps {
 }
 
 export function CreateMenuDialog({ addMenuNode, flow }: CreateMenuDialogProps) {
+	const { isOpen, onOpen, onClose } = useDisclosure()
+	const cancelRef = useRef()
+
 	const [selectMenuId, setSelectMenuId] = useState<string | undefined>()
 	const [menuTitle, setMenuTitle] = useState<string | undefined>()
 	const [menuType, setMenuType] = useState<"menu" | "option">()
-	const { isOpen, onOpen, onClose } = useDisclosure()
-	const cancelRef = useRef()
+	const [menuContent, setMenuContent] = useState<string | undefined>()
 
 	function createMenu() {
 		const randNum = Math.floor(Math.random() * 100) + 50
 		if (!menuTitle) return alert("Título do menu não pode ser vazio")
 		if (!menuType) return alert("Tipo do menu não pode ser vazio")
+		if (!menuContent) return alert("Conteúdo do menu não pode ser vazio")
 		const error: any = addMenuNode({
 			id: `${randNum}`,
 			title: menuTitle,
 			parentId: selectMenuId,
 			type: menuType,
+			content: menuContent,
 		})
 		if (error instanceof Error) {
 			alert(error.message)
@@ -83,7 +88,7 @@ export function CreateMenuDialog({ addMenuNode, flow }: CreateMenuDialogProps) {
 							</Stack>
 						</RadioGroup>
 						<Select
-							placeholder="Select option"
+							placeholder="Selecione o menu pai"
 							onChange={(e) => setSelectMenuId(e.target.value)}
 						>
 							{flowMenus?.map((menu) => (
@@ -92,6 +97,10 @@ export function CreateMenuDialog({ addMenuNode, flow }: CreateMenuDialogProps) {
 								</option>
 							))}
 						</Select>
+						<Textarea
+							placeholder="Escreva sua mensagem"
+							onChange={(e) => setMenuContent(e.target.value)}
+						/>
 						<button
 							className="bg-green-600 text-white font-bold px-3 py-2 rounded-md"
 							onClick={createMenu}

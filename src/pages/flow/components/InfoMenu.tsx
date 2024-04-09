@@ -68,6 +68,10 @@ export function InfoMenuDialog({ menu, open, closeInfoMenu }: InfoMenuDialog) {
 							<strong>Tipo: </strong>
 							{menu?.type === "menu" ? "Menu" : "Opção"}
 						</p>
+						<div className="flex flex-col items-center gap-2 mt-6">
+							<strong>Conteúdo da mensagem: </strong>
+							<p className="text-justify">{menu?.content}</p>
+						</div>
 					</div>
 					<AlertDialogCloseButton />
 					<AlertDialogBody className="flex flex-col gap-6 py-2"></AlertDialogBody>

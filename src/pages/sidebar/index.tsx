@@ -12,6 +12,7 @@ import { List } from "phosphor-react"
 
 import React from "react"
 import { FlowProps } from "../flow"
+import { CreateFlowDialog } from "../flow/components/CreateFlow"
 import { MenuCard } from "../flow/components/MenuCard"
 
 interface SidebarProps {
@@ -19,9 +20,10 @@ interface SidebarProps {
 	menuState: FlowProps | undefined
 	handleMenuChange(menu: FlowProps): void
 	deleteMenu(menu: FlowProps): void
+	addFlow(flow: FlowProps): void
 }
 
-export function Sidebar({ menuState, handleMenuChange, menus, deleteMenu }: SidebarProps) {
+export function Sidebar({ menuState, handleMenuChange, menus, deleteMenu, addFlow }: SidebarProps) {
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const btnRef = React.useRef()
 
@@ -62,7 +64,8 @@ export function Sidebar({ menuState, handleMenuChange, menus, deleteMenu }: Side
 						</div>
 					</DrawerBody>
 
-					<DrawerFooter>
+					<DrawerFooter className="flex gap-3 w-full justify-between">
+						<CreateFlowDialog addFlow={addFlow} />
 						<button
 							className="bg-[#327D6B] text-white px-4 py-2 font-bold rounded-md"
 							onClick={onClose}

@@ -19,6 +19,7 @@ export interface MenuProps {
 	title: string
 	type: "menu" | "option"
 	parentId?: string
+	content: string
 }
 
 export interface FlowProps {
@@ -36,7 +37,7 @@ interface FlowTree {
 
 const menusStd: FlowProps[] = [
 	{
-		id: "id-1",
+		id: "1",
 		title: "Menu 1",
 		//menus: [
 		// {
@@ -205,8 +206,30 @@ export const Flow = () => {
 	const [edges, setEdges] = useState<Edge[] | undefined>()
 	const [openMenuInfo, setOpenMenuInfo] = useState<InfoMenuDialogProps | undefined>()
 
-	function renderFlow(flow: FlowProps[]) {
-		flow.forEach((m, i) => {
+	function renderFlow(flow: FlowProps) {
+		setNodes([])
+		setEdges([])
+		const render = renderNodes(flow)
+		if (render instanceof Error) {
+			console.error(render.message)
+			return
+		}
+		setMenus((ms) => {
+			if (!ms) return [render]
+			const flows = ms
+			const renderId = Number(render.id)
+			flows[renderId - 1] = render
+			return flows
+		})
+		setMenu(render)
+		console.log("renderFlow", render)
+		if (!render.nodes || !render.edges) return
+		setNodes(render.nodes)
+		setEdges(render.edges)
+	}
+
+	useEffect(() => {
+		menusStd.forEach((m, i) => {
 			const render = renderNodes(m)
 			if (render instanceof Error) {
 				console.error(render.message)
@@ -223,10 +246,6 @@ export const Flow = () => {
 				setEdges(render.edges)
 			}
 		})
-	}
-
-	useEffect(() => {
-		renderFlow(menusStd)
 	}, [])
 
 	const onNodesChange = useCallback(
@@ -254,15 +273,13 @@ export const Flow = () => {
 		[setEdges]
 	)
 
-	function handleMenuChange(menuP: FlowProps) {
-		const selectMenu = menus.find((m) => m.id === menuP.id)
-		if (!selectMenu) {
+	function handleMenuChange(flow: FlowProps) {
+		const selectedFlow = menus.find((m) => m.id === flow.id)
+		if (!selectedFlow) {
 			console.error("Menu não encontrado")
 			return
 		}
-		setMenu(selectMenu)
-		setNodes(selectMenu.nodes)
-		setEdges(selectMenu.edges)
+		renderFlow(selectedFlow)
 	}
 
 	function deleteMenu(menuP: FlowProps) {
@@ -289,9 +306,16 @@ export const Flow = () => {
 
 		selectFlow?.menus?.push(menuNode)
 
-		renderFlow(allFlow)
+		renderFlow(selectFlow)
 
 		// setCenter(lastNode!.position.x, lastNode!.position.y, { zoom: 2.3, duration: 1000 })
+	}
+
+	function addFlow(flow: FlowProps) {
+		const lenMenus = menus.length
+		flow.id = `${lenMenus + 1}`
+		setMenus((flows) => [...flows, flow])
+		//renderFlow(allFlow)
 	}
 
 	function handleInfoMenu(node: NodeRF) {
@@ -311,6 +335,7 @@ export const Flow = () => {
 				menus={menus}
 				handleMenuChange={handleMenuChange}
 				deleteMenu={deleteMenu}
+				addFlow={addFlow}
 			/>
 			<InfoMenuDialog
 				menu={openMenuInfo?.menu}
