@@ -11,14 +11,14 @@ import {
 import { List } from "phosphor-react"
 
 import React from "react"
-import { MenuProps } from "../flow"
+import { FlowProps } from "../flow"
 import { MenuCard } from "../flow/components/MenuCard"
 
 interface SidebarProps {
-	menus: MenuProps[]
-	menuState: MenuProps | undefined
-	handleMenuChange(menu: MenuProps): void
-	deleteMenu(menu: MenuProps): void
+	menus: FlowProps[]
+	menuState: FlowProps | undefined
+	handleMenuChange(menu: FlowProps): void
+	deleteMenu(menu: FlowProps): void
 }
 
 export function Sidebar({ menuState, handleMenuChange, menus, deleteMenu }: SidebarProps) {
