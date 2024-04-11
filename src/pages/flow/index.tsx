@@ -9,6 +9,7 @@ import {
 	applyEdgeChanges,
 	applyNodeChanges,
 } from "reactflow"
+import { convertToFlow, testMenus } from "../../api/convertion"
 import { ManageFlow } from "../manage-flow"
 import { Sidebar } from "../sidebar"
 import { CreateMenuDialog } from "./components/CreateMenu"
@@ -236,7 +237,10 @@ export const Flow = () => {
 	}
 
 	useEffect(() => {
-		menusStd.forEach((m, i) => {
+		const allFlow = convertToFlow(testMenus)
+		console.log("allFlow", allFlow)
+		const flowArray = [allFlow]
+		flowArray.forEach((m, i) => {
 			const render = renderNodes(m)
 			if (render instanceof Error) {
 				console.error(render.message)
