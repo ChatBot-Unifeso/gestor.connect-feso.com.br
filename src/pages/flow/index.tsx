@@ -14,12 +14,17 @@ import { Sidebar } from "../sidebar"
 import { CreateMenuDialog } from "./components/CreateMenu"
 import { InfoMenuDialog, InfoMenuDialogProps } from "./components/InfoMenu"
 
+interface NumMenus {
+	[key: string]: string
+}
+
 export interface MenuProps {
 	id: string
 	title: string
 	type: "menu" | "option"
 	parentId?: string
 	content: string
+	nums?: NumMenus
 }
 
 export interface FlowProps {
@@ -330,6 +335,19 @@ export const Flow = () => {
 		setOpenMenuInfo({ open: false, menu: undefined })
 	}
 
+	function editMenu(mn: MenuProps) {
+		let pos = -1
+		menu?.menus?.map((m, i) => {
+			if (m.id === mn.id) {
+				pos = i
+			}
+		})
+		if (pos === -1) return
+		menu?.menus?.splice(pos, 1, mn)
+		console.log("edit menu", menu?.menus)
+		renderFlow(menu!)
+	}
+
 	return (
 		<div className="flex w-screen">
 			<Sidebar
@@ -344,6 +362,7 @@ export const Flow = () => {
 				open={openMenuInfo?.open}
 				closeInfoMenu={closeInfoMenu}
 				flow={menu}
+				editMenu={editMenu}
 			/>
 			<CreateMenuDialog addMenuNode={addMenuNode} flow={menu} />
 			<section className="h-screen w-full flex justify-between items-center border-1 border-zinc-400">

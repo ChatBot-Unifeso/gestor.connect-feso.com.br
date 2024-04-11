@@ -13,16 +13,22 @@ import {
 	Textarea,
 	useDisclosure,
 } from "@chakra-ui/react"
-import { Plus } from "phosphor-react"
-import { useRef, useState } from "react"
+import { Pencil } from "phosphor-react"
+import { useEffect, useRef, useState } from "react"
 import { FlowProps, MenuProps } from ".."
 
 interface EditMenuDialogProps {
 	flow: FlowProps | undefined
 	menu: MenuProps
+	editMenu(menu: MenuProps): void
 }
 
-export function EditMenuDialog({ flow, menu }: EditMenuDialogProps) {
+interface NumMenus {
+	[key: string]: string
+}
+
+export function EditMenuDialog({ flow, menu, editMenu }: EditMenuDialogProps) {
+	const [numMenus, setNumMenus] = useState<NumMenus | undefined>()
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const cancelRef = useRef()
 
@@ -31,11 +37,18 @@ export function EditMenuDialog({ flow, menu }: EditMenuDialogProps) {
 	const [menuType, setMenuType] = useState<"menu" | "option">()
 	const [menuContent, setMenuContent] = useState<string | undefined>()
 
-	function createMenu() {
-		const randNum = Math.floor(Math.random() * 100) + 50
+	function saveChanges() {
 		if (!menuTitle) return alert("Título do menu não pode ser vazio")
 		if (!menuType) return alert("Tipo do menu não pode ser vazio")
 		if (!menuContent) return alert("Conteúdo do menu não pode ser vazio")
+
+		editMenu({
+			...menu,
+			title: menuTitle,
+			type: menuType,
+			content: menuContent,
+			nums: numMenus,
+		})
 
 		onClose()
 	}
@@ -43,14 +56,24 @@ export function EditMenuDialog({ flow, menu }: EditMenuDialogProps) {
 	//const flowMenus = flow?.menus?.filter((menu) => menu.type === "menu")
 	const flowTree = flow?.flowTree || {}
 	const childrens = flowTree[menu.id] || []
+	const options = flow?.menus?.filter((menu) => childrens.includes(menu.id))
+
+	useEffect(() => {
+		if (menu.nums) {
+			setNumMenus(menu.nums)
+		}
+		setMenuTitle(menu.title)
+		setMenuType(menu.type)
+		setMenuContent(menu.content)
+	}, [])
 
 	return (
 		<>
 			<button
 				onClick={onOpen}
-				className="p-3 bg-green-600 rounded-md text-white hover:bg-opacity-90 z-10"
+				className="p-2 bg-green-600 rounded-md text-white hover:bg-opacity-90 z-10"
 			>
-				<Plus size={24} weight="bold" />
+				<Pencil size={16} weight="bold" />
 			</button>
 			<AlertDialog
 				motionPreset="slideInBottom"
@@ -75,8 +98,9 @@ export function EditMenuDialog({ flow, menu }: EditMenuDialogProps) {
 						<RadioGroup
 							onChange={(e: "option" | "menu") => setMenuType(e)}
 							defaultChecked
+							defaultValue={menu.type}
 						>
-							<Stack direction="column">
+							<Stack direction="column" defaultChecked>
 								<Radio value="option" defaultChecked={menu.type === "option"}>
 									Apenas mensagem
 								</Radio>
@@ -100,23 +124,32 @@ export function EditMenuDialog({ flow, menu }: EditMenuDialogProps) {
 							onChange={(e) => setMenuContent(e.target.value)}
 							defaultValue={menu.content}
 						/>
-						{childrens.map((child, i) => (
-							<div className="flex gap-2 items-center">
-								<span key={child}>{i + 1}:</span>
-								<Select placeholder="Selecione a opção">
-									{childrens?.map((child) => (
-										<option key={child} value={child}>
-											{child}
-										</option>
-									))}
-								</Select>
-							</div>
-						))}
+						{menu.type === "menu" &&
+							childrens.map((child, i) => (
+								<div className="flex gap-2 items-center">
+									<span key={child}>{i + 1}:</span>
+									<Select
+										placeholder="Selecione a opção"
+										onChange={(e) => {
+											setNumMenus({
+												...numMenus,
+												[String(i + 1)]: e.target.value,
+											})
+										}}
+									>
+										{options?.map((child) => (
+											<option key={child.id} value={child.id}>
+												{child.title}
+											</option>
+										))}
+									</Select>
+								</div>
+							))}
 						<button
 							className="bg-green-600 text-white font-bold px-3 py-2 rounded-md"
-							onClick={createMenu}
+							onClick={saveChanges}
 						>
-							Adicionar menu ou opção
+							Salvar
 						</button>
 					</AlertDialogBody>
 				</AlertDialogContent>

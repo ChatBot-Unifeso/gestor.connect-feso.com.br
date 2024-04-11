@@ -1,9 +1,7 @@
 import {
 	AlertDialog,
 	AlertDialogBody,
-	AlertDialogCloseButton,
 	AlertDialogContent,
-	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogOverlay,
 	useDisclosure,
@@ -23,9 +21,10 @@ interface InfoMenuDialog {
 	open: boolean | undefined
 	closeInfoMenu(): void
 	flow: FlowProps | undefined
+	editMenu(menu: MenuProps): void
 }
 
-export function InfoMenuDialog({ menu, open, closeInfoMenu, flow }: InfoMenuDialog) {
+export function InfoMenuDialog({ menu, open, closeInfoMenu, flow, editMenu }: InfoMenuDialog) {
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const cancelRef = useRef()
 
@@ -42,6 +41,7 @@ export function InfoMenuDialog({ menu, open, closeInfoMenu, flow }: InfoMenuDial
 		onClose()
 	}
 
+	const qntMenus = Object.keys(menu?.nums || {})
 	return (
 		<>
 			<button
@@ -60,7 +60,13 @@ export function InfoMenuDialog({ menu, open, closeInfoMenu, flow }: InfoMenuDial
 				<AlertDialogOverlay />
 
 				<AlertDialogContent>
-					<AlertDialogHeader>Informações do menu ou opção</AlertDialogHeader>
+					<AlertDialogHeader className="px-10 flex justify-between items-center">
+						<p>Informações do menu ou opção</p>{" "}
+						<div className="flex gap-3 items-center">
+							<EditMenuDialog menu={menu!} flow={flow} editMenu={editMenu} />
+							{/* <AlertDialogCloseButton /> */}
+						</div>
+					</AlertDialogHeader>
 					<div className="w-full flex flex-col items-center gap-3">
 						<p>
 							<strong>Título: </strong>
@@ -70,16 +76,27 @@ export function InfoMenuDialog({ menu, open, closeInfoMenu, flow }: InfoMenuDial
 							<strong>Tipo: </strong>
 							{menu?.type === "menu" ? "Menu" : "Opção"}
 						</p>
+						{qntMenus.map((nMn) => {
+							if (menu?.type === "option") return
+							if (!menu?.nums) return
+							const menuId = menu?.nums[nMn]
+							const thisMenu = flow?.menus?.find((m) => m.id === menuId)
+							if (!thisMenu) return
+							return (
+								<div key={nMn} className="flex	 items-center gap-2">
+									<strong>Opção {nMn}: </strong>
+									<p className="text-justify">{thisMenu?.title}</p>
+								</div>
+							)
+						})}
 						<div className="flex flex-col items-center gap-2 mt-6">
 							<strong>Conteúdo da mensagem: </strong>
 							<p className="text-justify">{menu?.content}</p>
 						</div>
 					</div>
-					<AlertDialogCloseButton />
 					<AlertDialogBody className="flex flex-col gap-6 py-2">
-						<AlertDialogFooter>
-							<EditMenuDialog menu={menu!} flow={flow} />
-							{/* <div
+						{/* <AlertDialogFooter>
+							<div
 								title="Excluir menu"
 								onClick={() => {
 									deleteOption(menu!)
@@ -88,8 +105,8 @@ export function InfoMenuDialog({ menu, open, closeInfoMenu, flow }: InfoMenuDial
 								className="cursor-pointer"
 							>
 								<Trash size={28} className="text-red-300" weight="fill" />
-							</div> */}
-						</AlertDialogFooter>
+							</div>
+						</AlertDialogFooter> */}
 					</AlertDialogBody>
 				</AlertDialogContent>
 			</AlertDialog>
