@@ -25,6 +25,7 @@ export interface MenuProps {
 export interface FlowProps {
 	id: string
 	title: string
+	flowTree?: FlowTree
 
 	nodes?: NodeRF[]
 	edges?: Edge[]
@@ -94,7 +95,7 @@ const menusStd: FlowProps[] = [
 	// },
 ]
 
-interface RenderNodesReturn {
+interface RenderNodeReturn {
 	node: NodeRF
 	flowTree: FlowTree
 }
@@ -104,7 +105,7 @@ function renderNode(
 	allNodes: NodeRF[],
 	menus: MenuProps[],
 	flowTree: FlowTree
-): RenderNodesReturn | Error {
+): RenderNodeReturn | Error {
 	let thisFlowTree = { ...flowTree }
 	let parentNode: NodeRF | undefined
 	const nodeParentId = allNodes.find((n) => n.id === menu.parentId)
@@ -165,7 +166,7 @@ function renderNode(
 	return { node, flowTree: thisFlowTree }
 }
 
-function renderNodes(flow: FlowProps) {
+function renderNodes(flow: FlowProps): FlowProps | Error {
 	let flowTree: FlowTree = {}
 	if (!flow.menus) return flow
 	const rootNode = flow.menus.filter((n) => !n.parentId)
@@ -196,6 +197,7 @@ function renderNodes(flow: FlowProps) {
 	renderFlow.nodes = nodes
 	renderFlow.edges = edges
 
+	renderFlow.flowTree = flowTree
 	return renderFlow
 }
 
@@ -222,10 +224,10 @@ export const Flow = () => {
 			return flows
 		})
 		setMenu(render)
-		console.log("renderFlow", render)
 		if (!render.nodes || !render.edges) return
 		setNodes(render.nodes)
 		setEdges(render.edges)
+		console.log("render flow tree", render)
 	}
 
 	useEffect(() => {
@@ -341,6 +343,7 @@ export const Flow = () => {
 				menu={openMenuInfo?.menu}
 				open={openMenuInfo?.open}
 				closeInfoMenu={closeInfoMenu}
+				flow={menu}
 			/>
 			<CreateMenuDialog addMenuNode={addMenuNode} flow={menu} />
 			<section className="h-screen w-full flex justify-between items-center border-1 border-zinc-400">
