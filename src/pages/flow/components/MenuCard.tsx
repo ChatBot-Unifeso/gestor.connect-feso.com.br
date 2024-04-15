@@ -1,12 +1,12 @@
 import { Trash } from "phosphor-react"
-import { MenuProps } from ".."
+import { FlowProps } from ".."
 
 interface MenuCardProps {
 	isActive: boolean
 	isSelect: boolean
-	data: MenuProps
-	handleMenuChange(menu: MenuProps): void
-	deleteMenu(menu: MenuProps): void
+	data: FlowProps
+	handleMenuChange(menu: FlowProps): void
+	deleteMenu(menu: FlowProps): void
 }
 
 export function MenuCard({

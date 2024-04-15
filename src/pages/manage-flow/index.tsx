@@ -18,6 +18,7 @@ interface ManageFlowProps {
 	onNodesChange: OnChange<NodeChange>
 	onEdgesChange: OnChange<EdgeChange>
 	onConnect: (connection: any) => void
+	handleInfoMenu: (node: NodeRF) => void
 }
 
 export const ManageFlow = ({
@@ -26,6 +27,7 @@ export const ManageFlow = ({
 	onNodesChange,
 	onEdgesChange,
 	onConnect,
+	handleInfoMenu,
 }: ManageFlowProps) => {
 	return (
 		<ReactFlow
@@ -37,6 +39,9 @@ export const ManageFlow = ({
 			onConnect={onConnect}
 			edgeTypes={{
 				"straight-edge": StraightEdge,
+			}}
+			onNodeDoubleClick={(_, node) => {
+				handleInfoMenu(node)
 			}}
 		>
 			<Controls />
