@@ -76,6 +76,9 @@ export const UpdateMenu = (props: UpdateMenuProps) => {
           <Button colorScheme="green" onClick={submitUpdateMenu}>
             Salvar
           </Button>
+          <Button colorScheme="red" onClick={submitUpdateMenu}>
+            Apagar
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

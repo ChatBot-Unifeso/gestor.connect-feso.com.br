@@ -50,6 +50,11 @@ export const Flow = () => {
         nodeTypes={nodeTypes}
         nodes={nodes}
         edges={edges}
+        onNodeClick={(event, node) => {
+          if (node.type === 'createOption') {
+          }
+          console.log('click', node)
+        }}
         fitView={true}
       >
         <Panel position="top-right">
