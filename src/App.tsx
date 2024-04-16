@@ -1,29 +1,30 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom"
-import { ReactFlowProvider } from "reactflow"
-import { Flow } from "./pages/flow"
-import { Login } from "./pages/login"
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { ReactFlowProvider } from 'reactflow'
+import { Flow } from './pages/flow'
+import { Login } from './pages/login'
+import 'reactflow/dist/style.css'
+import { isLoginAtom } from './atoms'
+import { useAtom } from 'jotai'
 
 const router = createBrowserRouter([
-	{
-		path: "/login",
-		element: <Login />,
-	},
-	{
-		path: "/flow",
-		element: (
-			<ReactFlowProvider>
-				<Flow />
-			</ReactFlowProvider>
-		),
-	},
-	{
-		path: "/",
-		element: <Login />,
-	},
+  {
+    path: '/',
+    element: (
+      <ReactFlowProvider>
+        <Flow />
+      </ReactFlowProvider>
+    ),
+  },
+  {
+    path: '/',
+    element: <Login />,
+  },
 ])
 
 function App() {
-	return <RouterProvider router={router} />
+  const [isLogin] = useAtom(isLoginAtom)
+
+  return isLogin ? <RouterProvider router={router} /> : <Login />
 }
 
 export default App
