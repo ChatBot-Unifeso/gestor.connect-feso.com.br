@@ -2,7 +2,7 @@ export type MenuRequest = {
   id_menu: string
   title: string,
   initFlow: boolean,
-  Option: OptionRequest[]
+  options: OptionRequest[]
 }
 
 export type OptionRequest = {
