@@ -5,7 +5,7 @@ export const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9lbXBsb3llZSI6IjliMTg3Yjk0LTk1ZjEtNGViNi1iNzA1LWQ4MjZhYTY1NTIwOCIsIm5hbWUiOiJyb290IiwiZW1haWwiOiJhZG1AYWRtLmNvbSIsImlkX2NvbXBhbnkiOiIwODU3MjBhNi1hZDZhLTRlMjMtODk5OS1kM2I1MTdkOGZiYTEiLCJyb2xlcyI6ImFkbSIsImlhdCI6MTcxMjkyODk2OX0.49s4Angsf-X8Ay3h9AOPMqb-NJoNIcTl7cNDnC_34a8'
+  const token =  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9lbXBsb3llZSI6Ijg0ZDNiMTI5LWNkMmMtNDIxYi04ZmQ1LWJjYjUxNGMzZTQxYSIsIm5hbWUiOiJyb290IiwiZW1haWwiOiJhZG1AYWRtLmNvbSIsImlkX2NvbXBhbnkiOiI5ODdkZDdjMy05N2ZmLTQ4NmYtYjdjNi05YjQ3YzQ5ZTRhMDQiLCJyb2xlcyI6ImFkbSIsImlhdCI6MTcxMzU3MDkyMX0.iDpPFUDYS7xOlJ2LV-qKpbTy0Ia4wslGpbgFt_u1Uks"
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
