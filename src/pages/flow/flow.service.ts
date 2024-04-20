@@ -23,17 +23,17 @@ export const FlowService = (props: FlowServiceProps) => {
       return {
         id: menu.id_menu,
         data: { label: menu.title, ...menu },
-        position: { x: 250 * index, y: 5 },
+        position: { x: 250 * index, y: 5  },
         style: {
           background: '#f0f0f0',
-          height: menu.Option.length * 70 + 30,
+          height: menu.options.length * 70 + 30,
           width: 200,
         },
       }
     })
 
     const children_nodes = menus.reduce((acc: any, menu) => {
-      return [...acc, ...menu.Option.map((option, index) => {
+      return [...acc, ...menu.options.map((option, index) => {
         return {
           id: option.id_option,
           data: { label: option.title, ...option },
@@ -63,7 +63,7 @@ export const FlowService = (props: FlowServiceProps) => {
 
 
     const edges = menus.reduce((acc: any, menu) => {
-      return [...acc, ...menu.Option.map((option) => {
+      return [...acc, ...menu.options.map((option) => {
         return {
           id: `${option.id_option}-${option.id_next_menu || 'end'}`,
           source: option.id_option,
@@ -72,6 +72,9 @@ export const FlowService = (props: FlowServiceProps) => {
         }
       })]
     }, [])
+
+    console.log({ nodes, edges });
+    
 
     setNodes(nodes)
     setEdges(edges)
