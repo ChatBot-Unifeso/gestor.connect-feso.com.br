@@ -15,10 +15,10 @@ import {
   Select,
   useToast,
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MenuRequest } from 'src/@types/menu'
 import { api } from '../../../../../api'
-import { createOptionDataMenuAtom, refreshFlowAtom } from '../../../../../atoms'
+import { createOptionDataMenuAtom, refreshFlowAtom, selectedOptionAtom } from '../../../../../atoms'
 import { useAtom } from 'jotai'
 
 interface CreateOptionProps {
@@ -26,11 +26,12 @@ interface CreateOptionProps {
   onClose: () => void
 }
 
-export const CreateOption = (props: CreateOptionProps) => {
+export const UpdateOption = (props: CreateOptionProps) => {
   const { isOpen, onClose } = props
   const [menus, setMenus] = useState([] as MenuRequest[])
   const [navigationMenus, setNavigationMenus] = useState('')
   const [createOptionDataMenu] = useAtom(createOptionDataMenuAtom)
+  const [selectedOption] = useAtom(selectedOptionAtom) 
   const [_, setRefreshFlow] = useAtom(refreshFlowAtom)
 
   const toast = useToast()
@@ -42,6 +43,16 @@ export const CreateOption = (props: CreateOptionProps) => {
     action: '',
   })
 
+  useEffect(() => {
+    setDataCreateOption({
+      title: selectedOption.title,
+      number: selectedOption.number,
+      message: selectedOption.message,
+      action: selectedOption.action,
+    })
+    setNavigationMenus(selectedOption.id_next_menu || '')
+  } , [selectedOption])
+
   const selectAction = async (e: any) => {
     setDataCreateOption({ ...dataCreateOption, action: e.target.value })
 
@@ -49,12 +60,12 @@ export const CreateOption = (props: CreateOptionProps) => {
     setMenus(data)
   }
 
-  const submitCreateOption = async (e: any) => {
+
+  const submitUpdateMenu = async (e: any) => {
     e.preventDefault()
     try {
       if (dataCreateOption.action === 'navigation') {
-        await api.post('/option', {
-          id_menu: createOptionDataMenu.id_menu,
+        await api.patch('/option/'+ selectedOption.id_option , {
           id_next_menu: navigationMenus,
           data_option: {
             title: dataCreateOption.title,
@@ -63,9 +74,9 @@ export const CreateOption = (props: CreateOptionProps) => {
             message: 'navigation',
           },
         })
+        onClose()
       } else {
-        await api.post('/option', {
-          id_menu: createOptionDataMenu.id_menu,
+        await api.patch('/option/' + selectedOption.id_option, {
           data_option: {
             title: dataCreateOption.title,
             number: dataCreateOption.number,
@@ -83,10 +94,30 @@ export const CreateOption = (props: CreateOptionProps) => {
         isClosable: true,
       })
       onClose()
-
     } catch (error) {
       toast({
         title: 'Erro ao criar opção',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      })
+    }
+  }
+
+  const deleteMenu = async () => {
+    try {
+      await api.delete('/option/' + selectedOption.id_option)
+      toast({
+        title: 'Opção deletada com sucesso',
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      })
+      setRefreshFlow((state) => !state)
+      onClose()
+    } catch (error) {
+      toast({
+        title: 'Erro ao deletar opção',
         status: 'error',
         duration: 9000,
         isClosable: true,
@@ -98,9 +129,10 @@ export const CreateOption = (props: CreateOptionProps) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent bg="white" p={4} display="flex" flexDirection="column">
-        <ModalHeader>Criar Opção</ModalHeader>
-        <form onSubmit={submitCreateOption}>
+        <ModalHeader>Atualizar Opção</ModalHeader>
+        <form onSubmit={submitUpdateMenu}>
           <Input
+            value={dataCreateOption.title}
             required
             onChange={(e) =>
               setDataCreateOption({
@@ -111,7 +143,9 @@ export const CreateOption = (props: CreateOptionProps) => {
             mb={4}
             placeholder="Nome da opção"
           />
-          <NumberInput>
+          <NumberInput
+          value={dataCreateOption.number}
+          >
             <NumberInputField
               required
               type="number"
@@ -129,6 +163,7 @@ export const CreateOption = (props: CreateOptionProps) => {
             </NumberInputStepper>
           </NumberInput>
           <Select
+            value={dataCreateOption.action}
             required
             my={4}
             onChange={selectAction}
@@ -141,6 +176,7 @@ export const CreateOption = (props: CreateOptionProps) => {
 
           {dataCreateOption.action === 'navigation' && (
             <Select
+              value={navigationMenus}
               onChange={(e) => setNavigationMenus(e.target.value)}
               required
               placeholder="Navegação"
@@ -154,6 +190,7 @@ export const CreateOption = (props: CreateOptionProps) => {
           )}
           {dataCreateOption.action === 'message' && (
             <Input
+              value={dataCreateOption.message}
               onChange={(e) =>
                 setDataCreateOption({
                   ...dataCreateOption,
@@ -180,14 +217,17 @@ export const CreateOption = (props: CreateOptionProps) => {
             />
           )}
 
-          <ModalFooter>
-            <Button type="button" colorScheme="red" mr={3} onClick={onClose}>
-              Fechar
-            </Button>
-            <Button type="submit" colorScheme="green" mr={3}>
-              Salvar
-            </Button>
-          </ModalFooter>
+        <ModalFooter>
+          <Button colorScheme="orange" onClick={onClose}>
+            Fechar
+          </Button>
+          <Button colorScheme="green" type='submit' mx={3}>
+            Salvar
+          </Button>
+          <Button colorScheme="red" type='button' onClick={deleteMenu}>
+            Apagar
+          </Button>
+        </ModalFooter>
         </form>
       </ModalContent>
     </Modal>

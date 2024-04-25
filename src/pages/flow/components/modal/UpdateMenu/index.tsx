@@ -8,9 +8,9 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '../../../../../api'
-import { refreshFlowAtom } from '../../../../../atoms'
+import { refreshFlowAtom, selectedMenuAtom } from '../../../../../atoms'
 import { useAtom } from 'jotai'
 
 interface UpdateMenuProps {
@@ -21,18 +21,26 @@ interface UpdateMenuProps {
 
 export const UpdateMenu = (props: UpdateMenuProps) => {
   const { isOpen, onClose, toast } = props
+  const [selectedMenu] = useAtom(selectedMenuAtom)
+
   const [dataUpdateMenu, setDataUpdateMenu] = useState({
-    title: '',
+    title: "",
     initFlow: false,
   })
+
   const [_, setRefreshFlow] = useAtom(refreshFlowAtom)
+
+  useEffect(() => {
+    setDataUpdateMenu({
+      title: selectedMenu.title,
+      initFlow: selectedMenu.initFlow,
+    })
+  }, [selectedMenu])
+
 
   const submitUpdateMenu = async () => {
     try {
-      await api.patch('/menu', {
-        phone_bot: '00000000000',
-        data_menu: dataUpdateMenu,
-      })
+      await api.patch('/menu/' + selectedMenu.id_menu, dataUpdateMenu)
       toast({
         title: 'Menu criado com sucesso',
         status: 'success',
@@ -40,9 +48,31 @@ export const UpdateMenu = (props: UpdateMenuProps) => {
         isClosable: true,
       })
       setRefreshFlow((state) => !state)
+      onClose()
     } catch (error) {
       toast({
         title: 'Erro ao criar menu',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      })
+    }
+  }
+
+  const deleteMenu = async () => {
+    try {
+      await api.delete('/menu/' + selectedMenu.id_menu)
+      toast({
+        title: 'Menu deletado com sucesso',
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      })
+      setRefreshFlow((state) => !state)
+      onClose()
+    } catch (error) {
+      toast({
+        title: 'Erro ao deletar menu',
         status: 'error',
         duration: 9000,
         isClosable: true,
@@ -54,14 +84,16 @@ export const UpdateMenu = (props: UpdateMenuProps) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent bg="white" p={4} borderRadius={4}>
-        <ModalHeader>Criar Menu</ModalHeader>
+        <ModalHeader>Atualizar Menu</ModalHeader>
         <Input
           placeholder="Nome do menu"
+          value={dataUpdateMenu.title}
           onChange={(e) =>
             setDataUpdateMenu({ ...dataUpdateMenu, title: e.target.value })
           }
         />
         <Checkbox
+          isChecked={dataUpdateMenu.initFlow}
           onChange={(e) =>
             setDataUpdateMenu({ ...dataUpdateMenu, initFlow: e.target.checked })
           }
@@ -70,13 +102,13 @@ export const UpdateMenu = (props: UpdateMenuProps) => {
           Menu inicial
         </Checkbox>
         <ModalFooter>
-          <Button colorScheme="red" mr={3} onClick={onClose}>
+          <Button colorScheme="orange"  onClick={onClose}>
             Fechar
           </Button>
-          <Button colorScheme="green" onClick={submitUpdateMenu}>
+          <Button colorScheme="green" mx={3} onClick={submitUpdateMenu}>
             Salvar
           </Button>
-          <Button colorScheme="red" onClick={submitUpdateMenu}>
+          <Button colorScheme="red" onClick={deleteMenu}>
             Apagar
           </Button>
         </ModalFooter>

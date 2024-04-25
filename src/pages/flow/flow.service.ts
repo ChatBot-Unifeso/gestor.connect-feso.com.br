@@ -22,7 +22,7 @@ export const FlowService = (props: FlowServiceProps) => {
     const groups = menus.map((menu, index) => {
       return {
         id: menu.id_menu,
-        data: { label: menu.title, ...menu },
+        data: { label: menu.title, ...menu, type: 'group' },
         position: { x: 250 * index, y: 5  },
         style: {
           background: '#f0f0f0',
@@ -36,7 +36,7 @@ export const FlowService = (props: FlowServiceProps) => {
       return [...acc, ...menu.options.map((option, index) => {
         return {
           id: option.id_option,
-          data: { label: option.title, ...option },
+          data: { label: `${option.number} - ${option.title}`, ...option },
           position: { x: -5, y: 50 * (index + 1) },
           type: 'default',
           parentId: menu.id_menu,
@@ -54,7 +54,8 @@ export const FlowService = (props: FlowServiceProps) => {
       return {
         id: `create-option-${group.id}`,
         data: { ...group, setIsOpenCreateOption, setCreateOptionDataMenu },
-        position: { x: group.position.x + 15, y: group.style.height - 10 },
+        position: { x: group.position.x/250 + 20, y: group.style.height + 10},
+        parentId: group.id,
         type: 'createOption',
       }
     })

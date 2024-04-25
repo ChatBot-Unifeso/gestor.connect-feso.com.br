@@ -24,8 +24,9 @@ import { FlowService } from './flow.service'
 import { Plus } from 'phosphor-react'
 import { ModalFlow } from './components/modal'
 import { CreateOptionNode } from './components/CreateOptionNode'
-import { refreshFlowAtom } from '../../atoms'
+import { refreshFlowAtom, selectedMenuAtom, selectedOptionAtom } from '../../atoms'
 import { useAtom } from 'jotai'
+import { MenuRequest } from 'src/@types/menu'
 
 const nodeTypes = {
   createOption: CreateOptionNode as any,
@@ -36,7 +37,12 @@ export const Flow = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
   const [isOpenCreateMenu, setIsOpenCreateMenu] = useState(false)
   const [isOpenCreateOption, setIsOpenCreateOption] = useState(false)
+  const [isOpenUpdateMenu, setIsOpenUpdateMenu] = useState(false)
+  const [isOpenUpdateOption, setIsOpenUpdateOption] = useState(false)
   const [refreshFlow] = useAtom(refreshFlowAtom)
+  const [_, setSelectedMenu] = useAtom(selectedMenuAtom)
+  const [__, setSelectedOption] = useAtom(selectedOptionAtom) 
+
 
   const { convertToFlow } = FlowService({ setNodes, setEdges })
 
@@ -50,10 +56,20 @@ export const Flow = () => {
         nodeTypes={nodeTypes}
         nodes={nodes}
         edges={edges}
-        onNodeClick={(event, node) => {
-          if (node.type === 'createOption') {
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onNodeClick={(_, node) => {
+          if (node.type === 'createOption') {}
+          if (node.data.type === 'group') {
+            const data = node.data as MenuRequest
+            setSelectedMenu(data)
+            setIsOpenUpdateMenu(true)
           }
-          console.log('click', node)
+          if (node.type === 'default') {
+            const data = node.data as any
+            setSelectedOption(data)
+            setIsOpenUpdateOption(true)
+          }
         }}
         fitView={true}
       >
@@ -70,6 +86,10 @@ export const Flow = () => {
           onCloseCreateMenu={() => setIsOpenCreateMenu(false)}
           isOpenCreateOption={isOpenCreateOption}
           onCloseCreateOption={() => setIsOpenCreateOption(false)}
+          isOpenUpdateMenu={isOpenUpdateMenu}
+          onCloseUpdateMenu={() => setIsOpenUpdateMenu(false)}
+          isOpenUpdateOption={isOpenUpdateOption}
+          onCloseUpdateOption={() => setIsOpenUpdateOption(false)}
         />
         <Controls />
         <Background gap={12} size={1} />
