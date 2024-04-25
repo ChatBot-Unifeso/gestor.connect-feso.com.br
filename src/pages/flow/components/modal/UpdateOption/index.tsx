@@ -221,11 +221,11 @@ export const UpdateOption = (props: CreateOptionProps) => {
           <Button colorScheme="orange" onClick={onClose}>
             Fechar
           </Button>
-          <Button colorScheme="green" type='submit' mx={3}>
-            Salvar
-          </Button>
-          <Button colorScheme="red" type='button' onClick={deleteMenu}>
+          <Button colorScheme="red" mx={3} type='button' onClick={deleteMenu}>
             Apagar
+          </Button>
+          <Button colorScheme="green" type='submit' >
+            Salvar
           </Button>
         </ModalFooter>
         </form>

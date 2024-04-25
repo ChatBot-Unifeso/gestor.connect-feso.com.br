@@ -105,11 +105,11 @@ export const UpdateMenu = (props: UpdateMenuProps) => {
           <Button colorScheme="orange"  onClick={onClose}>
             Fechar
           </Button>
-          <Button colorScheme="green" mx={3} onClick={submitUpdateMenu}>
-            Salvar
-          </Button>
-          <Button colorScheme="red" onClick={deleteMenu}>
+          <Button colorScheme="red" mx={3} onClick={deleteMenu}>
             Apagar
+          </Button>
+          <Button colorScheme="green"  onClick={submitUpdateMenu}>
+            Salvar
           </Button>
         </ModalFooter>
       </ModalContent>
