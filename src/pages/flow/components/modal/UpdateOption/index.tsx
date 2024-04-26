@@ -205,6 +205,7 @@ export const UpdateOption = (props: CreateOptionProps) => {
 
           {dataCreateOption.action === 'redirect' && (
             <Input
+            value={dataCreateOption.message}
               onChange={(e) =>
                 setDataCreateOption({
                   ...dataCreateOption,
