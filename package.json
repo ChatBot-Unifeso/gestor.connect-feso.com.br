@@ -1,5 +1,5 @@
 {
-  "name": "gestor.connect-feso.com.br",
+  "name": "Project",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -52,5 +52,9 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
     "vite": "^5.1.6"
-  }
+  },
+  "main": "index.js",
+  "repository": "https://github.com/ChatBot-Unifeso/gestor.connect-feso.com.br.git",
+  "author": "Alan de Souza <alaan.correia.08@gmail.com>",
+  "license": "MIT"
 }
