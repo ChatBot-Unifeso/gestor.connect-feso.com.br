@@ -40,6 +40,7 @@ export const CreateMenu = (props: CreateMenuProps) => {
         isClosable: true,
       })
       setRefreshFlow((state) => !state)
+      onClose()
     } catch (error) {
       toast({
         title: 'Erro ao criar menu',
