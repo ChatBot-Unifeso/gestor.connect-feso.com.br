@@ -1,0 +1,7 @@
+[build]
+  # Diretório de onde o código será compilado
+  base = "public"
+  # Comando para construir o site
+  command = "yarn build"
+  # Pasta onde o comando de build será executado
+  publish = "public"
