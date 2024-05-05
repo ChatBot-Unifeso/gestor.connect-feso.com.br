@@ -1,6 +1,5 @@
 import {
   Button,
-  FormControl,
   Input,
   Modal,
   ModalContent,
@@ -18,7 +17,7 @@ import {
 import { useEffect, useState } from 'react'
 import { MenuRequest } from 'src/@types/menu'
 import { api } from '../../../../../api'
-import { createOptionDataMenuAtom, refreshFlowAtom, selectedOptionAtom } from '../../../../../atoms'
+import {  refreshFlowAtom, selectedOptionAtom } from '../../../../../atoms'
 import { useAtom } from 'jotai'
 
 interface CreateOptionProps {
@@ -30,7 +29,6 @@ export const UpdateOption = (props: CreateOptionProps) => {
   const { isOpen, onClose } = props
   const [menus, setMenus] = useState([] as MenuRequest[])
   const [navigationMenus, setNavigationMenus] = useState('')
-  const [createOptionDataMenu] = useAtom(createOptionDataMenuAtom)
   const [selectedOption] = useAtom(selectedOptionAtom) 
   const [_, setRefreshFlow] = useAtom(refreshFlowAtom)
 

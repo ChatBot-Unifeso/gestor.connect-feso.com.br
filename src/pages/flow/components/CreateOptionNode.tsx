@@ -38,8 +38,6 @@ export const CreateOptionNode = (props: CreateOptionNodeProps) => {
     <button
       onClick={() => {
         data.setIsOpenCreateOption(true)
-        console.log(data.data)
-
         setCreateOptionDataMenu(data.data)
       }}
       className="flex bg-white p-2 text-green-600  hover:text-green-900 hover:border-green-900 rounded-md shadow-md justify-center items-center border-dashed border-2 border-green-600  duration-500"

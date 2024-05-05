@@ -1,5 +1,3 @@
-import { Plus } from 'phosphor-react'
-import React from 'react'
 
 interface ButtonFlowProps {
   onClick: () => void
