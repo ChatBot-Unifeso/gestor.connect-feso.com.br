@@ -30,7 +30,7 @@ export const CreateMenu = (props: CreateMenuProps) => {
   const submitCreateMenu = async () => {
     try {
       await api.post('/menu', {
-        phone_bot: '00000000000',
+        phone_bot: '15550088571',
         data_menu: dataCreateMenu,
       })
       toast({
