@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export const api = axios.create({
-  baseURL: 'http://localhost:3003',
+  baseURL: 'https://jlfgnu3iqc.execute-api.sa-east-1.amazonaws.com/dev/',
 })
 
 api.interceptors.request.use((config) => {
