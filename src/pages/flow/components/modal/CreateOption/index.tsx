@@ -136,6 +136,7 @@ export const CreateOption = (props: CreateOptionProps) => {
             <option value="message">Mensagem</option>
             <option value="navigation">Navegação</option>
             <option value="redirect">Falar com atendente</option>
+            <option value="finish">Encerrar sessão</option>
           </Select>
 
           {dataCreateOption.action === 'navigation' && (

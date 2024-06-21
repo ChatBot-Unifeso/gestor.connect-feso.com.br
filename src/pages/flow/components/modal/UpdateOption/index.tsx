@@ -17,7 +17,7 @@ import {
 import { useEffect, useState } from 'react'
 import { MenuRequest } from 'src/@types/menu'
 import { api } from '../../../../../api'
-import {  refreshFlowAtom, selectedOptionAtom } from '../../../../../atoms'
+import { refreshFlowAtom, selectedOptionAtom } from '../../../../../atoms'
 import { useAtom } from 'jotai'
 
 interface CreateOptionProps {
@@ -29,7 +29,7 @@ export const UpdateOption = (props: CreateOptionProps) => {
   const { isOpen, onClose } = props
   const [menus, setMenus] = useState([] as MenuRequest[])
   const [navigationMenus, setNavigationMenus] = useState('')
-  const [selectedOption] = useAtom(selectedOptionAtom) 
+  const [selectedOption] = useAtom(selectedOptionAtom)
   const [_, setRefreshFlow] = useAtom(refreshFlowAtom)
 
   const toast = useToast()
@@ -49,7 +49,7 @@ export const UpdateOption = (props: CreateOptionProps) => {
       action: selectedOption.action,
     })
     setNavigationMenus(selectedOption.id_next_menu || '')
-  } , [selectedOption])
+  }, [selectedOption])
 
   const selectAction = async (e: any) => {
     setDataCreateOption({ ...dataCreateOption, action: e.target.value })
@@ -63,7 +63,7 @@ export const UpdateOption = (props: CreateOptionProps) => {
     e.preventDefault()
     try {
       if (dataCreateOption.action === 'navigation') {
-        await api.patch('/option/'+ selectedOption.id_option , {
+        await api.patch('/option/' + selectedOption.id_option, {
           id_next_menu: navigationMenus,
           data_option: {
             title: dataCreateOption.title,
@@ -142,7 +142,7 @@ export const UpdateOption = (props: CreateOptionProps) => {
             placeholder="Nome da opção"
           />
           <NumberInput
-          value={dataCreateOption.number}
+            value={dataCreateOption.number}
           >
             <NumberInputField
               required
@@ -170,6 +170,8 @@ export const UpdateOption = (props: CreateOptionProps) => {
             <option value="message">Mensagem</option>
             <option value="navigation">Navegação</option>
             <option value="redirect">Falar com atendente</option>
+            <option value="finish">Encerrar sessão</option>
+
           </Select>
 
           {dataCreateOption.action === 'navigation' && (
@@ -203,7 +205,7 @@ export const UpdateOption = (props: CreateOptionProps) => {
 
           {dataCreateOption.action === 'redirect' && (
             <Input
-            value={dataCreateOption.message}
+              value={dataCreateOption.message}
               onChange={(e) =>
                 setDataCreateOption({
                   ...dataCreateOption,
@@ -216,17 +218,17 @@ export const UpdateOption = (props: CreateOptionProps) => {
             />
           )}
 
-        <ModalFooter>
-          <Button colorScheme="orange" onClick={onClose}>
-            Fechar
-          </Button>
-          <Button colorScheme="red" mx={3} type='button' onClick={deleteMenu}>
-            Apagar
-          </Button>
-          <Button colorScheme="green" type='submit' >
-            Salvar
-          </Button>
-        </ModalFooter>
+          <ModalFooter>
+            <Button colorScheme="orange" onClick={onClose}>
+              Fechar
+            </Button>
+            <Button colorScheme="red" mx={3} type='button' onClick={deleteMenu}>
+              Apagar
+            </Button>
+            <Button colorScheme="green" type='submit' >
+              Salvar
+            </Button>
+          </ModalFooter>
         </form>
       </ModalContent>
     </Modal>

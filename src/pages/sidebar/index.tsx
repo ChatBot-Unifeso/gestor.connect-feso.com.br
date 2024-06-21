@@ -13,11 +13,13 @@ import { List, SignOut } from 'phosphor-react'
 import React from 'react'
 import { tokenAtom } from '../../atoms'
 import { useAtom } from 'jotai'
+import { Link } from 'react-router-dom'
 
 export function Sidebar() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
   const [_, setToken] = useAtom(tokenAtom)
+  
 
   return (
     <>
@@ -43,7 +45,11 @@ export function Sidebar() {
             <DrawerCloseButton className="my-2" />
           </DrawerHeader>
 
-          <DrawerBody></DrawerBody>
+          <DrawerBody>
+            <Link to="/chat" className="block my-2 bg-[#327D6B] p-2 text-white font-bold rounded-md">
+              Chat
+            </Link>
+          </DrawerBody>
 
           <DrawerFooter className="flex gap-3 w-full justify-between">
             <button

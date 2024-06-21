@@ -5,6 +5,7 @@ import { Login } from './pages/login'
 import 'reactflow/dist/style.css'
 import { isLoginAtom } from './atoms'
 import { useAtom } from 'jotai'
+import { Chat } from './pages/chat'
 
 const router = createBrowserRouter([
   {
@@ -16,8 +17,8 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/',
-    element: <Login />,
+    path: '/chat',
+    element: <Chat />,
   },
 ])
 
