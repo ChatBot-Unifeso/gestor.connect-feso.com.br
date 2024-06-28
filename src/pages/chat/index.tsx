@@ -7,6 +7,9 @@ import { Link } from "react-router-dom"
 import { jwtDecode } from "jwt-decode";
 import { useAtom } from "jotai"
 import { tokenAtom } from "../../atoms"
+import { PaperPlaneRight, XCircle } from "phosphor-react"; 
+import foto from "../../assets/foto_certa.png"
+import arthur from "../../assets/wallpaper.jpeg"
 
 type Message = {
   id_message: string
@@ -124,6 +127,16 @@ const sendMessage = async (e: any) => {
   }
 }
 
+  const closeChat = async () => {
+  try {
+    await api.post('/support/closeCall', {
+      to: selectedClient.phone,
+      id_call: selectedClient.messages[selectedClient.messages.length - 1].id_call,
+    })
+  } catch (error) {
+    toast({ title: 'Error', description: 'Error to close chat', status: 'error', duration: 9000, isClosable: true })
+  }
+  }
 
   useEffect(() => {
     let time = null
@@ -160,7 +173,9 @@ const sendMessage = async (e: any) => {
           <div
             className="flex items-center"
           >
-            <Avatar size="sm" name={user.name} />
+            <Avatar size="md" name={user.name}
+             src={foto}
+            />
             <div
               className="ml-2"
             >
@@ -256,13 +271,19 @@ const sendMessage = async (e: any) => {
 
           </div>
         </header>
-        
+        <div
+          className="w-full bg-no-repeat bg-cover bg-center h-full overflow-auto"
+          style={{
+            backgroundImage: `url(${arthur})`,      
+          }}
+        >
           <div
             className="w-full overflow-auto"
             >
+               
             <div
               ref={refScroll}
-              className="w-full bg-slate-100"
+              className="w-full "
               >
               {
                 selectedClient.messages.map((item) => (
@@ -270,10 +291,11 @@ const sendMessage = async (e: any) => {
                   key={item.id_message}
                   className={`w-full px-4 py-2 my-24 flex ${item.author !== 'user' ? 'justify-end ' : 'justify-start'} m-3  rounded`}
                   >
+                  
                     <div
                       className={`
                         w-64 flex-col flex  rounded-sm p-2 ${item.author !== 'user' ? 'bg-green-900 text-right' : 'bg-white text-left'}`}
-                    >
+                        >
 
                       <div
                         className="text-lg font-semibold"
@@ -292,6 +314,7 @@ const sendMessage = async (e: any) => {
                 ))
               }
             </div>
+            </div>
 
             {selectedClient.in_support && (
               <footer
@@ -301,6 +324,13 @@ const sendMessage = async (e: any) => {
                 onSubmit={sendMessage}
                 className="flex items-center justify-between w-full h-20 px-4 border-t"
                 >
+                  <button
+                  type="button"
+                  onClick={closeChat}
+                  className="px-4 py-2 m-2 text-white bg-red-500 rounded"
+                  >
+                   <XCircle size={32} />
+                  </button>
                   <input
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
@@ -310,9 +340,15 @@ const sendMessage = async (e: any) => {
                   />
                   <button
                   
-                  className="px-4 py-2 text-white bg-blue-500 rounded"
+                  className="px-4 py-2 m-2 flex justify-center items-center text-white bg-blue-500 rounded"
                   >
+                    <p
+                     className="p-2"
+                    >
+
                     Send
+                    </p>
+                    <PaperPlaneRight size={16} />
                   </button>
                 </form>
               </footer>
