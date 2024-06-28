@@ -175,7 +175,7 @@ const sendMessage = async (e: any) => {
             className="flex items-center"
           >
             <Avatar size="md" name={user.name}
-             src={foto}
+            backgroundColor={'#327D6B'}
             />
             <div
               className="ml-2"
@@ -295,9 +295,15 @@ const sendMessage = async (e: any) => {
                   
                     <div
                       className={`
-                        w-64 flex-col flex  rounded-sm p-2 ${item.author !== 'user' ? 'bg-green-900 text-right' : 'bg-white text-left'}`}
+                        w-64 flex-col flex shadow-md  rounded-sm p-2 ${item.author !== 'user' ? 'bg-green-900 text-right' : 'bg-white text-left'}`}
                         >
-
+                      <p
+                        className={`text-sm ${item.author !== 'user' ? ' text-white' : ' text-gray-500'}
+                          font-semibold
+                        `}
+                      >
+                        {item.author !== 'user' ?  user.name : selectedClient.name}
+                      </p>
                       <div
                         className="text-lg font-semibold"
                         >

@@ -44,8 +44,7 @@ export const Flow = () => {
         nodeTypes={nodeTypes}
         nodes={nodes}
         edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
+        draggable={true}
         onNodeClick={(_, node) => {
           if (node.type === 'createOption') {}
           if (node.data.type === 'group') {
