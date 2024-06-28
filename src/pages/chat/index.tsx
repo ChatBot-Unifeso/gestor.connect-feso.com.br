@@ -130,9 +130,10 @@ const sendMessage = async (e: any) => {
   const closeChat = async () => {
   try {
     await api.post('/support/closeCall', {
-      to: selectedClient.phone,
+      phone: selectedClient.phone,
       id_call: selectedClient.messages[selectedClient.messages.length - 1].id_call,
     })
+    setSelectedClient({} as Client)
   } catch (error) {
     toast({ title: 'Error', description: 'Error to close chat', status: 'error', duration: 9000, isClosable: true })
   }
